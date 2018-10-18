@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. $DIR/helpers
+
+test_prereqs
+
+SRC="${DIR}/../yodaspeak-server/src"
+
+exec env PYTHONPATH=$SRC $DIR/../yodaspeak-server/.venv/bin/python3 $DIR/../yodaspeak-server/manage.py shell < "${DIR}/gentoken.py"

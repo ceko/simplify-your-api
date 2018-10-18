@@ -1,0 +1,5 @@
+django==2.1.1                   # Django base
+djangorestframework==3.8.2      # API framework
+django-cors-headers==2.4.0      # Simple middleware for CORS
+
+spacy==2.0.12                   # Text processing

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. $DIR/helpers
+
+test_prereqs
+
+if [ ! -d ${DIR}/../yodaspeak-server/.venv ]; then
+    print_step "Creating virtual environment"
+    python3 -m venv ${DIR}/../yodaspeak-server/.venv | indent
+
+    print_step "Upgrading pip"
+    curl https://bootstrap.pypa.io/get-pip.py | ${DIR}/../yodaspeak-server/.venv/bin/python | indent
+else
+    print_step "Virtual environment already exists, skipping creation"
+fi
+
+print_step "Installing dependencies, this could take a while"
+$DIR/../yodaspeak-server/.venv/bin/pip3 install -r $DIR/../yodaspeak-server/requirements.txt | indent
+
+print_step "Getting spacy language models"
+${DIR}/../yodaspeak-server/.venv/bin/python -m spacy download en_core_web_sm | indent

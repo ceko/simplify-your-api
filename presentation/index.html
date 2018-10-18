@@ -1,0 +1,861 @@
+<html>
+	<head>
+        <title>
+            Simplify Your API
+        </title>
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/solarized.css">
+		<link rel="stylesheet" href="plugin/highlight/highlight.css">
+
+		<style>
+			.reveal pre code {
+				max-height: inherit;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+				<svg id="demo" viewBox="0 0 2880 1800" preserveAspectRatio="xMidYMid slice">
+					<defs>
+						<linearGradient id="grad1" x1="0" y1="0" x2="1" y2="0" color-interpolation="sRGB">
+						<stop id="stop1a" offset="0%" stop-color="#FFF"></stop>
+						<stop id="stop1b" offset="50%" stop-color="#FFF"></stop>
+						</linearGradient>
+						<linearGradient id="grad2" x1="0" y1="0" x2="1" y2="0" color-interpolation="sRGB">
+						<stop id="stop2a" offset="0%" stop-color="#FFF"></stop>
+						<stop id="stop2b" offset="100%" stop-color="#FFF"></stop>
+						</linearGradient>
+					</defs>
+					<rect id="rect1" x="0" y="0" width="2880" height="1800"  fill="url(#grad1)"></rect>
+					<rect style='display:none;' id="rect2" x="0" y="0" width="2880" height="1800" fill="url(#grad2)"></rect>
+				</svg>
+			<div class="slides">
+
+				<!-- tutorial outline -->
+				<section data-markdown>
+					<textarea data-template>
+						# SIMPLIFY YOUR API
+						Getting started with the django REST framework
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					## What is Django
+
+					* Framework used to rapidly build Python web apps.
+					* Enormous community.
+					* Long and stable history.  (1.0 release 2008)
+					</textarea>
+					<tips>
+						django documentation : https://www.djangoproject.com/
+					</tips>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						## Some light roleplay
+
+						We're going to write the backend for an already-developed frontend service.
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					## Project folders
+
+					**./cli** &mdash; UNIX-y command-line tools and wrappers.
+
+					**./yodaspeak-client** &mdash; API client, already developed.
+
+					**./yodaspeak-server** &mdash; API server, incomplete.
+
+					**./presentation** &mdash; You are here!
+					</textarea>
+				</section>
+				<section data-markdown class='right-gutter'>
+					<textarea data-template>
+						## Initialization
+
+						1. Install requirements
+						<pre><code data-trim data-noescape class='bash hljs'>
+							./cli/install-requirements
+						</code></pre>
+						2. Coffee <br />
+						3. Initialize database
+						<pre><code data-trim data-noescape class='bash hljs'>
+							./cli/django migrate
+						</code></pre>
+						<img src='images/compiling.png' width='40%' style='position: absolute; top: 0; right: -100%; width: 100%;' />
+					</textarea>
+					<tips>
+						python virtual environment : https://docs.python.org/3/tutorial/venv.html
+						python package managements : https://pypi.org/project/pip/
+						migrations : https://docs.djangoproject.com/en/2.1/topics/migrations/
+					</tips>
+
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Starting the app
+
+						<pre><code data-trim data-noescape class='bash hljs'>
+							#			command   address port
+							./cli/django runserver 0.0.0.0:8080
+						</code></pre>
+
+						[Open it up!](http://localhost:8080)
+					</textarea>
+					<tips>
+						django runserver : https://docs.djangoproject.com/en/2.1/ref/django-admin/#runserver
+						wsgi : https://www.fullstackpython.com/wsgi-servers.html
+					</tips>
+
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Editing api.py
+
+						**yodaspeak-server/src/yodaspeak/api.py**
+
+						<pre><code data-trim data-noescape class='python hljs'>
+							"""
+							This single file is where we'll do all of our API work.
+							"""
+							...
+							urlpatterns = []
+						</code></pre>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Our first endpoint
+
+						<pre><code data-trim data-noescape class='python hljs'>
+							@api_view(['GET'])
+							def version(request):
+								return Response({
+									'version': {
+										'major': 0,
+										'minor': 0,
+										'patch': 1
+									}
+								})
+						</code></pre>
+					</textarea>
+					<tips>
+						decorators : https://www.learnpython.org/en/Decorators
+						django rest framework : https://www.django-rest-framework.org/
+					</tips>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Endpoint url mapping
+
+						<pre><code data-trim data-noescape class='python hljs'>
+							urlpatterns += [
+								path(r'version/', version),
+							]
+						</code></pre>
+
+						[Open it up!](http://localhost:8080/api/version/)
+					</textarea>
+					<tips>
+						django urls : https://docs.djangoproject.com/en/2.1/topics/http/urls/#example
+					</tips>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Add translations endpoint
+
+						<pre><code data-trim data-noescape class='python hljs'>
+							@api_view(['POST'])
+							def translations(request):
+								message = request.data.get('request')
+								translation = to_yodish(message)
+
+								return Response({
+									'response': translation
+								})
+
+							urlpatterns += [
+								path(r'translations/', translations)
+							]
+						</code></pre>
+					</textarea>
+					Add translations endpoint
+
+					<pre><code data-trim data-noescape class='python hljs'>
+						from translator import to_yodish
+
+						@api_view(['POST'])
+						def translations(request):
+						    message = request.data.get('request')
+						    translation = to_yodish(message)
+
+						    return Response({
+						        'response': translation
+						    })
+					</code></pre>
+
+					Add url pattern
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						# the client is happy
+
+						and everyone goes home early
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						# just kidding,
+
+						can I see my old translations?
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## api featureset
+
+						- Authentication
+						- Authorization
+						- Validation
+						- Throttling
+						- Pagination
+						- Schema generation (RAML, OpenAPI)
+
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Viewsets
+
+						"Allows you to combine the logic for a set of related views in a single class."
+
+						- .retrieve() (GET)
+						- .list() (GET)
+						- .update() (PATCH)
+						- .create() (POST, PUT)
+						- .remove() (DELETE)
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Model Viewsets
+
+						Map a model to a viewset and provide default functionality for endpoints.
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Translation History Persistence
+
+						Define the storage schema.
+
+						<pre class='fragment'><code data-trim data-noescape class='python hljs'>
+							class TranslationHistory(models.Model):
+								created_on = models.DateTimeField(auto_now=True)
+								request = models.CharField(max_length=255)
+								response = models.CharField(max_length=255)
+						</code></pre>
+
+						<pre class='fragment'><code data-trim data-noescape class='bash hljs'>
+							./cli/django makemigrations
+							./cli/django migrate
+						</code></pre>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## serializers
+
+						<div id='serializer-example'>
+							<div id='serializer-request'>
+								{
+									"request": "Translate this."
+								}
+								<div id='horizontal-arrow'></div>
+							</div>
+							<div id='serializer'>
+								<div id='horizontal-arrow'></div>
+							</div>
+							<div id='model'>
+								new TranslationRequest(
+									payload="Translate this"
+								)
+							</div>
+						</div>
+					</textarea>
+
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Model Serializer
+
+						Define the request and response schema and the translation layer.
+
+						<pre class='fragment'><code data-trim data-noescape class='python hljs'>
+							class TranslationSerializer(ModelSerializer):
+								response = CharField(read_only=True)
+
+								class Meta:
+									model = TranslationHistory
+									fields = ('request','response','created_on','id')
+						</code></pre>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Model Viewset
+
+						Map methods and endpoints to a model.
+
+						<pre class='fragment'><code data-trim data-noescape class='python hljs'>
+							class TranslationViewSet(viewsets.ModelViewSet):
+								serializer_class = TranslationSerializer
+								queryset = TranslationHistory.objects.all().order_by(
+									'-created_on'
+								)
+
+							api_router = routers.DefaultRouter()
+							api_router.register(r'translations', TranslationViewSet)
+
+							urlpatterns += api_router.urls
+						</code></pre>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Overriding methods
+
+						Translating the request properly.
+
+						<pre class='fragment'><code data-trim data-noescape class='python hljs'>
+							class TranslationSerializer(ModelSerializer):
+								...
+								def create(self, validated_data):
+									return TranslationHistory.objects.create(
+										**validated_data,
+										response=to_yodish(validated_data.get('request'))
+									)
+						</code></pre>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Authentication &amp; Permissions
+
+						Parsing the Authorization header.
+
+						<pre class='fragment'><code data-trim data-noescape class='bash hljs'>
+							./cli/create-token
+						</code></pre>
+						<pre class='fragment'><code data-trim data-noescape class='python hljs'>
+							class TranslationViewSet(viewsets.ModelViewSet):
+								...
+								authentication_classes = [
+									TokenAuthentication,
+									SessionAuthentication
+								]
+								permission_classes = [
+									IsAuthenticated
+								]
+						</code></pre>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Persisting the User
+
+						<pre><code data-trim data-noescape class='python hljs'>
+							class TranslationHistory(models.Model):
+								...
+								user = models.ForeignKey(
+									settings.AUTH_USER_MODEL,
+									null=True,
+									on_delete=models.SET_NULL
+								)
+						</code></pre>
+						<pre class='fragment'><code data-trim data-noescape class='bash hljs'>
+							./cli/django makemigrations && ./cli/django migrate
+						</code></pre>
+						<pre class='fragment'><code data-trim data-noescape class='python hljs'>
+							class TranslationSerializer(ModelSerializer):
+								...
+								def create(self, validated_data):
+									return TranslationHistory.objects.create(
+										**validated_data,
+										user=self.context['request'].user,
+										response=to_yodish(validated_data['request'])
+									)
+						</code></pre>
+					</textarea>
+
+					<tips>
+						serializers : https://www.django-rest-framework.org/api-guide/serializers/
+					</tips>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Filtering Viewsets
+
+						<pre><code data-trim data-noescape class='python hljs'>
+							class TranslationViewSet(viewsets.ModelViewSet):
+								...
+								def get_queryset(self):
+									return self.queryset.filter(user=self.request.user)
+						</code></pre>
+					</textarea>
+
+					<tips>
+						serializers : https://www.django-rest-framework.org/api-guide/serializers/
+					</tips>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Additional Functionality
+
+						- Restricting verbs
+						- Throttling
+						- Pagination
+					</textarea>
+
+					<tips>
+						serializers : https://www.django-rest-framework.org/api-guide/serializers/
+					</tips>
+				</section>
+			</div>
+		</div>
+        <script src="js/reveal.js"></script>
+		<script src="js/tweenmax.js"></script>
+
+        <script src="plugin/markdown/marked.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			const getQueryParams = () => {
+				try{
+					url = window.location.href;
+					query_str = url.substr(url.indexOf('?')+1, url.length-1);
+					r_params = query_str.split('&');
+					params = {}
+					for( i in r_params){
+						param = r_params[i].split('=');
+						params[ param[0] ] = param[1] || true;
+					}
+					return params;
+				}
+				catch(e){
+					return {};
+				}
+			}
+
+			Reveal.initialize({
+				transition: 'none',
+				backgroundTransition: 'none',
+			});
+			Reveal.addEventListener( 'slidechanged', function( event ) {
+				//playNextTransition();
+			})
+			Reveal.slide(getQueryParams().slide || 0);
+			hljs.initHighlightingOnLoad();
+			let playNextTransition = null;
+
+			(function() {
+				function init(showStats) {
+					// stats
+					if (showStats) {
+					  var stats = new Stats();
+					  stats.domElement.style.position = 'absolute';
+					  stats.domElement.style.left = '0';
+					  stats.domElement.style.top = '0';
+					  document.body.appendChild(stats.domElement);
+					  requestAnimationFrame(function updateStats(){
+						stats.update();
+						requestAnimationFrame(updateStats);
+					  });
+					}
+
+					// init
+					var svg = document.getElementById('demo');
+					tesselation.setup(svg);
+					gradients.setup();
+
+					var lastTransitionAt, transitionDelay = 5500, transitionDuration = 3000;
+
+					playNextTransition = () => {
+					  tesselation.next(transitionDuration);
+					  gradients.next(transitionDuration);
+					};
+
+					function tick(time) {
+					  if (!lastTransitionAt || time - lastTransitionAt > transitionDelay) {
+						lastTransitionAt = time;
+						playNextTransition();
+					  }
+					  //window.requestAnimationFrame(tick);
+					}
+					window.requestAnimationFrame(tick);
+				  }
+
+				  //////////////////////////////
+				  // Delaunay Triangulation
+				  //////////////////////////////
+
+				  var calcDelaunayTriangulation = (function() {
+					var EPSILON = 1.0 / 1048576.0;
+					function getSuperT(vertices) {
+					  var xMin = Number.POSITIVE_INFINITY, yMin = Number.POSITIVE_INFINITY,
+						  xMax = Number.NEGATIVE_INFINITY, yMax = Number.NEGATIVE_INFINITY,
+						  i, xDiff, yDiff, maxDiff, xCenter, yCenter;
+					  for(i = vertices.length; i--; ) {
+						if(vertices[i][0] < xMin) xMin = vertices[i][0];
+						if(vertices[i][0] > xMax) xMax = vertices[i][0];
+						if(vertices[i][1] < yMin) yMin = vertices[i][1];
+						if(vertices[i][1] > yMax) yMax = vertices[i][1];
+					  }
+					  xDiff = xMax - xMin;
+					  yDiff = yMax - yMin;
+					  maxDiff = Math.max(xDiff, yDiff);
+					  xCenter = xMin + xDiff * 0.5;
+					  yCenter = yMin + yDiff * 0.5;
+					  return [
+						[xCenter - 20 * maxDiff, yCenter - maxDiff],
+						[xCenter, yCenter + 20 * maxDiff],
+						[xCenter + 20 * maxDiff, yCenter - maxDiff]
+					  ];
+					}
+					function circumcircle(vertices, i, j, k) {
+					  var xI = vertices[i][0], yI = vertices[i][1],
+						  xJ = vertices[j][0], yJ = vertices[j][1],
+						  xK = vertices[k][0], yK = vertices[k][1],
+						  yDiffIJ = Math.abs(yI - yJ), yDiffJK = Math.abs(yJ - yK),
+						  xCenter, yCenter, m1, m2, xMidIJ, xMidJK, yMidIJ, yMidJK, xDiff, yDiff;
+					  // bail condition
+					  if(yDiffIJ < EPSILON && yDiffJK < EPSILON)
+						throw new Error("Can't get circumcircle since all 3 points are y-aligned");
+					  // calc circumcircle center x/y, radius
+					  m1  = -((xJ - xI) / (yJ - yI));
+					  m2  = -((xK - xJ) / (yK - yJ));
+					  xMidIJ = (xI + xJ) / 2.0;
+					  xMidJK = (xJ + xK) / 2.0;
+					  yMidIJ = (yI + yJ) / 2.0;
+					  yMidJK = (yJ + yK) / 2.0;
+					  xCenter = (yDiffIJ < EPSILON) ? xMidIJ :
+						(yDiffJK < EPSILON) ? xMidJK :
+						(m1 * xMidIJ - m2 * xMidJK + yMidJK - yMidIJ) / (m1 - m2);
+					  yCenter  = (yDiffIJ > yDiffJK) ?
+						m1 * (xCenter - xMidIJ) + yMidIJ :
+						m2 * (xCenter - xMidJK) + yMidJK;
+					  xDiff = xJ - xCenter;
+					  yDiff = yJ - yCenter;
+					  // return
+					  return {i: i, j: j, k: k, x: xCenter, y: yCenter, r: xDiff * xDiff + yDiff * yDiff};
+					}
+					function dedupeEdges(edges) {
+					  var i, j, a, b, m, n;
+					  for(j = edges.length; j; ) {
+						b = edges[--j]; a = edges[--j];
+						for(i = j; i; ) {
+						  n = edges[--i]; m = edges[--i];
+						  if((a === m && b === n) || (a === n && b === m)) {
+							edges.splice(j, 2); edges.splice(i, 2);
+							break;
+						  }
+						}
+					  }
+					}
+					return function(vertices) {
+					  var n = vertices.length,
+						  i, j, indices, st, candidates, locked, edges, dx, dy, a, b, c;
+					  // bail if too few / too many verts
+					  if(n < 3 || n > 20000)
+						return [];
+					  // copy verts and sort indices by x-position
+					  vertices = vertices.slice(0);
+					  indices = new Array(n);
+					  for(i = n; i--; )
+						indices[i] = i;
+					  indices.sort(function(i, j) {
+						return vertices[j][0] - vertices[i][0];
+					  });
+					  // supertriangle
+					  st = getSuperT(vertices);
+					  vertices.push(st[0], st[1], st[2]);
+					  // init candidates/locked tris list
+					  candidates = [circumcircle(vertices, n + 0, n + 1, n + 2)];
+					  locked = [];
+					  edges = [];
+					  // scan left to right
+					  for(i = indices.length; i--; edges.length = 0) {
+						c = indices[i];
+						// check candidates tris against point
+						for(j = candidates.length; j--; ) {
+						  // lock tri if point to right of circumcirc
+						  dx = vertices[c][0] - candidates[j].x;
+						  if(dx > 0.0 && dx * dx > candidates[j].r) {
+							locked.push(candidates[j]);
+							candidates.splice(j, 1);
+							continue;
+						  }
+						  // point outside circumcirc = leave candidates
+						  dy = vertices[c][1] - candidates[j].y;
+						  if(dx * dx + dy * dy - candidates[j].r > EPSILON)
+							continue;
+						  // point inside circumcirc = break apart, save edges
+						  edges.push(
+							candidates[j].i, candidates[j].j,
+							candidates[j].j, candidates[j].k,
+							candidates[j].k, candidates[j].i
+						  );
+						  candidates.splice(j, 1);
+						}
+						// new candidates from broken edges
+						dedupeEdges(edges);
+						for(j = edges.length; j; ) {
+						  b = edges[--j];
+						  a = edges[--j];
+						  candidates.push(circumcircle(vertices, a, b, c));
+						}
+					  }
+					  // close candidates tris, remove tris touching supertri verts
+					  for(i = candidates.length; i--; )
+						locked.push(candidates[i]);
+					  candidates.length = 0;
+					  for(i = locked.length; i--; )
+						if(locked[i].i < n && locked[i].j < n && locked[i].k < n)
+						  candidates.push(locked[i].i, locked[i].j, locked[i].k);
+					  // done
+					  return candidates;
+					};
+				  })();
+
+				  var tesselation = (function() {
+					var svg, svgW, svgH, prevGroup;
+
+					function createRandomTesselation() {
+					  var wW = window.innerWidth;
+					  var wH = window.innerHeight;
+
+					  var gridSpacing = 40, scatterAmount = 4;
+					  var gridSize, i, x, y;
+
+					  if (wW / wH > svgW / svgH) { // window wider than svg = use width for gridSize
+						gridSize = gridSpacing * svgW / wW;
+					  } else { // window taller than svg = use height for gridSize
+						gridSize = gridSpacing * svgH / wH;
+					  }
+
+					  var vertices = [];
+					  var xOffset = (svgW % gridSize) / 2, yOffset = (svgH % gridSize) / 2;
+					  for (x = Math.floor(svgW/gridSize/2) + 1; x >= -1; x--) {
+						for (y = Math.floor(svgH/gridSize) + 1; y >= -1; y--) {
+						  vertices.push(
+							[
+							  xOffset + gridSize * (x + scatterAmount * (Math.random() - 0.5)),
+							  yOffset + gridSize * (y + scatterAmount * (Math.random() - 0.5))
+							]
+						  );
+						}
+					  }
+
+					  var triangles = calcDelaunayTriangulation(vertices);
+
+					  var group = document.createElementNS('http://www.w3.org/2000/svg','g');
+					  var polygon;
+					  for(i = triangles.length; i; ) {
+						polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+
+						polygon.setAttribute('points',
+						  vertices[triangles[--i]][0] + ',' + vertices[triangles[i]][1] + ' ' +
+						  vertices[triangles[--i]][0] + ',' + vertices[triangles[i]][1] + ' ' +
+						  vertices[triangles[--i]][0] + ',' + vertices[triangles[i]][1]
+						);
+						let points = polygon.getAttribute('points').split(' ');
+						let xMidPoint = 0;
+						let yMidPoint = 0;
+
+						for(let i=0;i<points.length;i++) {
+							let p = points[i].split(',')
+
+							xMidPoint += parseFloat(p[0], 10)
+							yMidPoint += parseFloat(p[1], 10)
+						}
+
+						xMidPoint /= 3;
+						yMidPoint /= 3;
+
+						let circleCenterX = 1440;
+						let circleCenterY = 1440;
+						let circleRadius = 1440;
+						let vectorX = xMidPoint-circleCenterX;
+						let vectorY = yMidPoint-circleCenterY;
+						let vectorSum = Math.pow(vectorX,2)+Math.pow(vectorY,2);
+						let distance = Math.sqrt(
+							Math.abs(vectorSum)
+						) * Math.sign(vectorSum)
+
+
+						let fillOpacity = Math.min(1.25, Math.pow(
+							1-((distance-circleRadius)/circleRadius), 5
+						)) * (i%2 ? 1 : 1.1);
+
+						polygon.setAttribute(
+							'fill-opacity',
+							fillOpacity
+						);
+						polygon.setAttribute('stroke-opacity', 1.25-Math.min(1.25, Math.pow(
+							1-((distance-circleRadius)/(circleRadius)), 3
+						)));
+						group.appendChild(polygon);
+					  }
+
+					  return group;
+					}
+
+					return {
+					  setup: function(svgElement) {
+						svg = svgElement;
+						var vb = svg.getAttribute('viewBox').split(/\D/g);
+						svgW = vb[2];
+						svgH = vb[3];
+					  },
+					  next: function(t) {
+						var toRemove, i, n;
+						t /= 1000;
+
+						if (prevGroup && prevGroup.children && prevGroup.children.length) {
+						  toRemove = prevGroup;
+						  n = toRemove.children.length;
+						  for (i = n; i--; ) {
+							TweenMax.to(toRemove.children[i], t*0.4, {opacity: 0, delay: 0});
+						  }
+						  TweenMax.delayedCall(t * (0.7 + 0.05), function(group) { svg.removeChild(group); }, [toRemove], this);
+						}
+						var g = createRandomTesselation();
+						n = g.children.length;
+						for (i = n; i--; ) {
+						  //TweenMax.fromTo(g.children[i], 0, {opacity: 0}, {opacity: i/n*1.5, delay: 0, ease: Back.easeOut});
+						}
+						svg.appendChild(g);
+						prevGroup = g;
+					  }
+					}
+				  })();
+
+				  //////////////////////////////
+				  // Gradients
+				  //////////////////////////////
+
+				  var gradients = (function() {
+					var grad1, grad2, showingGrad1;
+
+					// using colors from IBM Design Colors this time
+					var colors = [ // 14 colors - use 3-5 span
+					  //'#3c6df0', // ultramarine50
+					  //'#0C4B33',
+					  //'#0C4B3333',
+
+					  //'#12a3b4', // aqua40
+					  //'#00a78f', // teal40
+					  //'#00aa5e', // green40
+					  '#44B78B', // lime30
+
+					  //'#44B78B66', // lime30
+					  //'#ffb000', // gold20
+					  //'#e62325', // red50
+					  //'#fe8500', // orange30
+					  //'#e3bc13', // yellow20
+					  //'#fe6100', // peach40
+
+					  //'#dc267f', // magenta50
+					  //'#c22dd5', // purple50
+					  //'#9753e1', // violet50
+					  '#FFF'  // indigo60
+					];
+
+					function assignRandomColors(gradObj) {
+					  var rA = 0;
+					  var rB = 1;
+
+					  gradObj.stopA.setAttribute('stop-color', colors[rA]);
+					  gradObj.stopB.setAttribute('stop-color', colors[rB]);
+					}
+
+					return {
+					  setup: function() {
+						showingGrad1 = false;
+						grad1 = {
+						  stopA: document.getElementById('stop1a'),
+						  stopB: document.getElementById('stop1b'),
+						  rect:  document.getElementById('rect1')
+						};
+						grad2 = {
+						  stopA: document.getElementById('stop2a'),
+						  stopB: document.getElementById('stop2b'),
+						  rect:  document.getElementById('rect2')
+						};
+						grad1.rect.style.opacity = 0;
+						grad2.rect.style.opacity = 0;
+					  },
+					  next: function(t) {
+						t /= 1000;
+
+						var show, hide;
+						if (showingGrad1) {
+						  hide = grad1;
+						  show = grad2;
+						} else {
+						  hide = grad2;
+						  show = grad1;
+						}
+						showingGrad1 = !showingGrad1;
+
+						TweenMax.to(hide.rect, 0.55*t, {opacity: 0, delay: 0, ease: Sine.easeOut});
+						assignRandomColors(show);
+						TweenMax.to(show.rect, 0, {opacity: 1, ease: Sine.easeIn});
+					  }
+					};
+				  })();
+
+				  //////////////////////////////
+				  // Start
+				  //////////////////////////////
+
+				  init();
+			})();
+		</script>
+	</body>
+</html>
+
+<!--
+	Outline
+
+	1. Introduction
+		a. who am i
+		b. why is this relevant
+		c. what will we be covering
+			i. principles
+			ii. technology
+	2. Python
+	3. Django
+	4. Yoda speak api
+
+-->

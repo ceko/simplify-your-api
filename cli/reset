@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. $DIR/helpers
+
+test_prereqs
+
+#echo "Removing virtual environment"
+#rm -rf "${DIR}/../yodaspeak-server/.venv" &> /dev/null
+echo "Removing sqlite database"
+rm -rf "${DIR}/../yodaspeak-server/db.sqlite3" &> /dev/null
+echo "Removing migrations"
+rm -rf "${DIR}"/../yodaspeak-server/src/yodaspeak/migrations/00* &> /dev/null
