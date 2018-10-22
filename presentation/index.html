@@ -35,7 +35,9 @@
 				<section data-markdown>
 					<textarea data-template>
 						# SIMPLIFY YOUR API
-						Getting started with the django REST framework
+						with python & the django REST framework
+
+						https://github.com/ceko/simplify-your-api
 					</textarea>
 				</section>
 				<section data-markdown>
@@ -45,16 +47,31 @@
 					* Framework used to rapidly build Python web apps.
 					* Enormous community.
 					* Long and stable history.  (1.0 release 2008)
-					</textarea>
+
 					<tips>
-						django documentation : https://www.djangoproject.com/
+						<ul>
+							<li><a href='https://docs.djangoproject.com/'>django docs</a></li>
+
+						</ul>
 					</tips>
+				</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
 						## Some light roleplay
 
 						We're going to write the backend for an already-developed frontend service.
+
+						<pre class='fragment'><code data-trim data-noescape class='json hljs'>
+								{
+									"request": "Yoda is looking good today."
+								}
+							</code></pre>
+						<pre class='fragment'><code data-trim data-noescape class='json hljs'>
+								{
+									"response": "Looking good today, Yoda is."
+								}
+							</code></pre>
 					</textarea>
 				</section>
 				<section data-markdown>
@@ -84,12 +101,16 @@
 							./cli/django migrate
 						</code></pre>
 						<img src='images/compiling.png' width='40%' style='position: absolute; top: 0; right: -100%; width: 100%;' />
+
+						<tips>
+							<ul>
+								<li><a href='https://docs.python.org/3/tutorial/venv.html'>python virtual env</a></li>
+								<li><a href='https://pypi.org/project/pip/'>python package management</a></li>
+								<li><a href='https://docs.djangoproject.com/en/2.1/topics/migrations/'>database migrations</a></li>
+							</ul>
+						</tips>
 					</textarea>
-					<tips>
-						python virtual environment : https://docs.python.org/3/tutorial/venv.html
-						python package managements : https://pypi.org/project/pip/
-						migrations : https://docs.djangoproject.com/en/2.1/topics/migrations/
-					</tips>
+
 
 				</section>
 
@@ -103,12 +124,15 @@
 						</code></pre>
 
 						[Open it up!](http://localhost:8080)
-					</textarea>
-					<tips>
-						django runserver : https://docs.djangoproject.com/en/2.1/ref/django-admin/#runserver
-						wsgi : https://www.fullstackpython.com/wsgi-servers.html
-					</tips>
 
+						<tips>
+							<ul>
+								<li><a href='https://docs.djangoproject.com/en/2.1/ref/django-admin/#runserver'>django runserver</a></li>
+								<li><a href='https://www.fullstackpython.com/wsgi-servers.html'>wsgi</a></li>
+
+							</ul>
+						</tips>
+					</textarea>
 				</section>
 
 				<section data-markdown>
@@ -142,11 +166,15 @@
 									}
 								})
 						</code></pre>
+
+						<tips>
+							<ul>
+								<li><a href='https://www.learnpython.org/en/Decorators'>decorators </a></li>
+								<li><a href='https://www.django-rest-framework.org/'>django rest framework</a></li>
+
+							</ul>
+						</tips>
 					</textarea>
-					<tips>
-						decorators : https://www.learnpython.org/en/Decorators
-						django rest framework : https://www.django-rest-framework.org/
-					</tips>
 				</section>
 
 				<section data-markdown>
@@ -160,10 +188,13 @@
 						</code></pre>
 
 						[Open it up!](http://localhost:8080/api/version/)
+
+						<tips>
+							<ul>
+								<li><a href='https://docs.djangoproject.com/en/2.1/topics/http/urls/#example'>django urls</a></li>
+							</ul>
+						</tips>
 					</textarea>
-					<tips>
-						django urls : https://docs.djangoproject.com/en/2.1/topics/http/urls/#example
-					</tips>
 				</section>
 
 				<section data-markdown>
@@ -235,23 +266,9 @@
 
 				<section data-markdown>
 					<textarea data-template>
-						## Viewsets
+						## declarative syntax
 
-						"Allows you to combine the logic for a set of related views in a single class."
-
-						- .retrieve() (GET)
-						- .list() (GET)
-						- .update() (PATCH)
-						- .create() (POST, PUT)
-						- .remove() (DELETE)
-					</textarea>
-				</section>
-
-				<section data-markdown>
-					<textarea data-template>
-						## Model Viewsets
-
-						Map a model to a viewset and provide default functionality for endpoints.
+						Tell the program what we want, not how to do it.
 					</textarea>
 				</section>
 
@@ -259,7 +276,7 @@
 					<textarea data-template>
 						## Translation History Persistence
 
-						Define the storage schema.
+						Declare persistent fields.
 
 						<pre class='fragment'><code data-trim data-noescape class='python hljs'>
 							class TranslationHistory(models.Model):
@@ -272,6 +289,15 @@
 							./cli/django makemigrations
 							./cli/django migrate
 						</code></pre>
+
+						<tips>
+							<ul>
+								<li><a href='https://docs.djangoproject.com/en/2.1/ref/models/querysets/'>querysets docs</a></li>
+
+								<li><a href='https://docs.djangoproject.com/en/2.1/topics/db/models/'>model docs</a></li>
+
+							</ul>
+						</tips>
 					</textarea>
 				</section>
 
@@ -296,14 +322,13 @@
 							</div>
 						</div>
 					</textarea>
-
 				</section>
 
 				<section data-markdown>
 					<textarea data-template>
 						## Model Serializer
 
-						Define the request and response schema and the translation layer.
+						Declare the request and response schema.
 
 						<pre class='fragment'><code data-trim data-noescape class='python hljs'>
 							class TranslationSerializer(ModelSerializer):
@@ -313,6 +338,26 @@
 									model = TranslationHistory
 									fields = ('request','response','created_on','id')
 						</code></pre>
+
+						<tips>
+								<ul>
+									<li><a href='https://www.django-rest-framework.org/api-guide/serializers/'>serializers</a></li>
+								</ul>
+							</tips>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Viewsets
+
+						"Allows you to combine the logic for a set of related views in a single class."
+
+						- .retrieve() (GET)
+						- .list() (GET)
+						- .update() (PATCH)
+						- .create() (POST, PUT)
+						- .remove() (DELETE)
 					</textarea>
 				</section>
 
@@ -320,7 +365,7 @@
 					<textarea data-template>
 						## Model Viewset
 
-						Map methods and endpoints to a model.
+						Declare viewset ammd model interactions.
 
 						<pre class='fragment'><code data-trim data-noescape class='python hljs'>
 							class TranslationViewSet(viewsets.ModelViewSet):
@@ -334,6 +379,12 @@
 
 							urlpatterns += api_router.urls
 						</code></pre>
+
+						<tips>
+							<ul>
+								<li><a href='https://www.django-rest-framework.org/api-guide/viewsets/'>viewsets</a></li>
+							</ul>
+						</tips>
 					</textarea>
 				</section>
 
@@ -405,10 +456,6 @@
 									)
 						</code></pre>
 					</textarea>
-
-					<tips>
-						serializers : https://www.django-rest-framework.org/api-guide/serializers/
-					</tips>
 				</section>
 
 				<section data-markdown>
@@ -422,10 +469,6 @@
 									return self.queryset.filter(user=self.request.user)
 						</code></pre>
 					</textarea>
-
-					<tips>
-						serializers : https://www.django-rest-framework.org/api-guide/serializers/
-					</tips>
 				</section>
 
 				<section data-markdown>
@@ -436,10 +479,15 @@
 						- Throttling
 						- Pagination
 					</textarea>
+				</section>
 
-					<tips>
-						serializers : https://www.django-rest-framework.org/api-guide/serializers/
-					</tips>
+				<section data-markdown>
+					<textarea data-template>
+						## questions
+
+						claffer2@naz.edu <br />
+						https://steamcommunity.com/profiles/76561197969061379/
+					</textarea>
 				</section>
 			</div>
 		</div>
